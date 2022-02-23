@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 
     # custom apps
     'applications.account',
+    'applications.category',
 ]
 
 MIDDLEWARE = [

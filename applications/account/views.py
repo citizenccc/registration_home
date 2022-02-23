@@ -1,8 +1,10 @@
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
-from applications.account.serializers import RegisterSerializer
+from applications.account.serializers import RegisterSerializer, LoginSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authtoken.views import ObtainAuthToken
 
 class RegistrationView(APIView):
     def post(self, request):
@@ -11,3 +13,16 @@ class RegistrationView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response('Successfully signed up', status=status.HTTP_201_CREATED)
+
+
+class LoginView(ObtainAuthToken):  # попутно импортируем этот модуль
+    serializer_class = LoginSerializer  # тоже попутно импортим
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request):
+        user = request.user
+        Token.objects.filter(user=user).delete()
+        return Response('Successfully logged out', status=status.HTTP_200_OK)
